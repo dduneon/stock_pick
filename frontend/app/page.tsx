@@ -1,4 +1,6 @@
 import type { Recommendation } from '@/types';
+import Header from '@/components/Header';
+import EmptyState from '@/components/EmptyState';
 
 async function getRecommendations(): Promise<Recommendation[]> {
   try {
@@ -37,8 +39,10 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-[#F9FAFB]">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <Header />
+
+      {/* Page Title */}
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <h1 className="text-xl font-bold text-gray-900">
             오늘의 추천 종목
@@ -47,19 +51,16 @@ export default async function Home() {
             AI 기반 가치투자 추천 서비스
           </p>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {recommendations.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-gray-500 text-lg">
-              추천 종목을 불러오는 중입니다...
-            </p>
-            <p className="text-gray-400 text-sm mt-2">
-              서버 연결을 확인해주세요
-            </p>
-          </div>
+          <EmptyState
+            variant="data"
+            title="추천 종목을 불러오는 중입니다..."
+            description="서버 연결을 확인해주세요"
+          />
         ) : (
           <>
             {/* Stock Grid */}
