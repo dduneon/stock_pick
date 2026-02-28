@@ -13,7 +13,7 @@ from app.services.recommendation import (
 router = APIRouter(prefix="/api", tags=["stocks"])
 
 
-@router.get("/stocks", response_model=List[Stock])
+@router.get("/stocks", response_model=List[StockDetail])
 def get_stocks(limit: Optional[int] = Query(None, description="Maximum number of results")):
     """
     Get list of all stocks.
@@ -105,3 +105,53 @@ def search_stocks(q: str = Query(..., description="Search query (company name)")
     
     stocks = data_loader.search_stocks(q.strip())
     return stocks
+
+
+@router.get("/stocks/{ticker}/technical")
+def get_technical_indicators(ticker: str):
+    """
+    Get technical indicators for a stock.
+    
+    Returns:
+    - moving_averages: {ma_5, ma_20, ma_60, ma_120}
+    - rsi: {value, signal}
+    - volume: {current, ma_20, spike_detected}
+    - trend: uptrend/downtrend/sideways
+    """
+    from app.services.technical_analysis import analyze_stock
+    
+    result = analyze_stock(ticker)
+    
+    if 'error' in result:
+        raise HTTPException(status_code=404, detail=result['error'])
+    
+    return result['indicators']
+
+
+@router.get("/stocks/{ticker}/chart")
+def get_chart_data(ticker: str, period: str = "3m"):
+    """
+    Get OHLCV + indicators data for chart rendering.
+    
+    period: "1m" | "3m" | "6m" | "1y"
+    """
+    from app.services.technical_analysis import analyze_stock
+    
+    days_map = {
+        "1m": 30,
+        "3m": 90,
+        "6m": 180,
+        "1y": 365
+    }
+    days = days_map.get(period, 90)
+    
+    result = analyze_stock(ticker, days)
+    
+    if 'error' in result:
+        raise HTTPException(status_code=404, detail=result['error'])
+    
+    return {
+        'ticker': ticker,
+        'period': period,
+        'data': result['chart_data']
+    }
