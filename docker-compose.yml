@@ -1,0 +1,87 @@
+services:
+  # Backend Service - FastAPI
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stock-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - DATA_DIR=/app/data
+      - DART_API_KEY=${DART_API_KEY}
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+      - /app/__pycache__
+      - /app/app/__pycache__
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - stock-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Frontend Service - Next.js with hot reload
+  # Note: Frontend runs on WSL2 directly for easier Windows browser access
+  # To run in Docker instead, use: docker compose --profile docker-frontend up -d
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: stock-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    command: bun run dev
+    depends_on:
+      - backend
+    networks:
+      - stock-network
+    restart: unless-stopped
+    profiles:
+      - docker-frontend
+
+  # Alternative: Run frontend directly on WSL2 (recommended for Windows development)
+  # Just run: cd frontend && bun run dev
+
+  # Batch Service - Optional scheduler
+  batch:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stock-batch
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - DATA_DIR=/app/data
+      - DART_API_KEY=${DART_API_KEY}
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+      - ./backend/logs:/app/logs
+      - /app/__pycache__
+      - /app/app/__pycache__
+      - /app/batch/__pycache__
+    command: python -m batch.scheduler
+    networks:
+      - stock-network
+    restart: unless-stopped
+    profiles:
+      - batch
+
+networks:
+  stock-network:
+    driver: bridge
