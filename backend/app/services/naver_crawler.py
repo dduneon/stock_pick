@@ -275,10 +275,24 @@ def _get_financial_data(ticker: str) -> Dict[str, Any]:
         _rate_limit()
         response = requests.get(url, headers=_get_headers(), timeout=10)
         response.raise_for_status()
-        response.encoding = 'euc-kr'
+        # Don't set encoding - let pandas auto-detect (Naver returns UTF-8)
 
-        # Use match for precise targeting
-        dfs = pd.read_html(response.text, match='주요재무정보', encoding='euc-kr')
+        # Try match first - pandas auto-detects encoding
+        dfs = pd.read_html(response.text, match='주요재무정보')
+        
+        # Fallback: try without match, find table by shape/content
+        if not dfs:
+            try:
+                all_dfs = pd.read_html(response.text)
+                for t in all_dfs:
+                    if t.shape[0] > 10 and t.shape[1] > 3:
+                        col0_str = str(t.iloc[:10, 0].tolist())
+                        if 'ROE' in col0_str or '매출' in col0_str or '주요' in col0_str:
+                            dfs = [t]
+                            break
+            except Exception:
+                pass
+        
         if not dfs:
             return _get_empty_financial_data()
 

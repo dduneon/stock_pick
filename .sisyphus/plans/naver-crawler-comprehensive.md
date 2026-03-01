@@ -359,7 +359,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
 
 ### Wave 2: Crawler Implementation
 
-- [ ] **4. Implement New `_get_financial_data()` Function**
+- [x] **4. Implement New `_get_financial_data()` Function**
 
   **What to do**:
   - Rewrite `_get_financial_data()` in `naver_crawler.py` using user's pandas approach
@@ -439,7 +439,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 2 group)
 
-- [ ] **5. Add Helper Functions for Metric Extraction**
+- [x] **5. Add Helper Functions for Metric Extraction**
 
   **What to do**:
   - Create `_get_latest_valid_data(series)` - handles missing values, returns latest non-null
@@ -503,7 +503,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 2 group)
 
-- [ ] **6. Implement Metric Extraction for All Fields**
+- [x] **6. Implement Metric Extraction for All Fields**
 
   **What to do**:
   - Create `_extract_all_metrics(annual_df)` function
@@ -571,7 +571,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 2 group)
 
-- [ ] **7. Add Error Handling and Null Value Management**
+- [x] **7. Add Error Handling and Null Value Management**
 
   **What to do**:
   - Ensure all extraction functions handle missing rows gracefully
@@ -611,7 +611,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
 
 ### Wave 3: Schema & Data Updates
 
-- [ ] **8. Extend Stock Schema with New Fields**
+- [x] **8. Extend Stock Schema with New Fields**
 
   **What to do**:
   - Update `backend/app/schemas/stock.py` to add new fields to Stock schema
@@ -684,7 +684,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 3 group)
 
-- [ ] **9. Update Batch Collection for New Fields**
+- [x] **9. Update Batch Collection for New Fields**
 
   **What to do**:
   - Update `backend/batch/collect_data.py` to include new fields in data collection
@@ -744,7 +744,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 3 group)
 
-- [ ] **10. Update Data Loader for New Fields**
+- [x] **10. Update Data Loader for New Fields**
 
   **What to do**:
   - Update `backend/app/services/data_loader.py` to load new fields
@@ -808,7 +808,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
 
 ### Wave 4: Testing
 
-- [ ] **11. Write Unit Tests for Extraction Functions**
+- [x] **11. Write Unit Tests for Extraction Functions**
 
   **What to do**:
   - Create `backend/tests/test_naver_crawler.py`
@@ -919,7 +919,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 4 group)
 
-- [ ] **12. Write Integration Tests with Mock HTML**
+- [x] **12. Write Integration Tests with Mock HTML**
 
   **What to do**:
   - Write integration tests for `_get_financial_data()`
@@ -974,7 +974,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 4 group)
 
-- [ ] **13. Write Edge Case Tests**
+- [x] **13. Write Edge Case Tests**
 
   **What to do**:
   - Test with completely empty table
@@ -1020,7 +1020,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 4 group)
 
-- [ ] **14. Create Test Fixtures for Various Stock Types**
+- [x] **14. Create Test Fixtures for Various Stock Types**
 
   **What to do**:
   - Create fixtures for different stock types:
@@ -1068,7 +1068,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
 
 ### Wave 5: Final Integration
 
-- [ ] **15. Full Batch Job Test Run**
+- [x] **15. Full Batch Job Test Run**
 
   **What to do**:
   - Run `python -m backend.batch.collect_data --limit 10` (test mode)
@@ -1131,7 +1131,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 5 group)
 
-- [ ] **16. Verify API Endpoints Still Work**
+- [x] **16. Verify API Endpoints Still Work**
 
   **What to do**:
   - Start backend server
@@ -1180,7 +1180,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 5 group)
 
-- [ ] **17. Performance Test (Rate Limiting Check)**
+- [x] **17. Performance Test (Rate Limiting Check)**
 
   **What to do**:
   - Verify rate limiting is still working (1-2 second delays)
@@ -1231,7 +1231,7 @@ pytest backend/tests/ -k "test_get_recommendations or test_get_stock_detail" -v
   
   **Commit**: NO (part of Wave 5 group)
 
-- [ ] **18. Documentation Update**
+- [x] **18. Documentation Update**
 
   **What to do**:
   - Update `backend/app/services/AGENTS.md` with new crawler details
