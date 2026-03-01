@@ -47,7 +47,7 @@ def _parse_number(text: Optional[str]) -> Optional[float]:
         return None
 
 
-def _parse_market_cap(text: Optional[str]) -> Optional[float]:
+
     if not text:
         return None
     text = text.strip().replace(',', '')
@@ -61,6 +61,79 @@ def _parse_market_cap(text: Optional[str]) -> Optional[float]:
     if 만원_match:
         return float(만원_match.group(1).replace(',', '')) * 10000
     return _parse_number(text)
+
+# ============================================================================
+# KRX Ticker Functions (from KIND - Korean Exchange)
+# ============================================================================
+
+
+def get_krx_tickers(market: str = 'KOSPI') -> List[Dict[str, str]]:
+    """
+    Get tickers from KRX (Korea Exchange) via KIND system.
+    
+    Args:
+        market: 'KOSPI' or 'KOSDAQ' (KOSDAQ not implemented yet)
+        
+    Returns:
+        List of dicts with 'Code' and 'Name' keys
+        
+    Example:
+        >>> tickers = get_krx_tickers('KOSPI')
+        >>> # Returns: [{'Code': '005930', 'Name': '삼성전자'}, ...]
+    """
+    if market.upper() == 'KOSPI':
+        market_type = 'stockMkt'
+    elif market.upper() == 'KOSDAQ':
+        market_type = 'kosdaqMkt'
+    else:
+        raise ValueError("market must be 'KOSPI' or 'KOSDAQ'")
+    
+    url = f'http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13&marketType={market_type}'
+    
+    try:
+        df = pd.read_html(url, header=0, encoding='euc-kr')[0]
+        
+        # Format ticker to 6 digits
+        df['종목코드'] = df['종목코드'].astype(str).str.zfill(6)
+        
+        # Select and rename columns
+        result = df[['회사명', '종목코드']].rename(
+            columns={'회사명': 'Name', '종목코드': 'Code'}
+        )
+        
+        return result.to_dict(orient='records')
+        
+    except Exception as e:
+        print(f"Failed to fetch KRX tickers: {e}")
+        return []
+
+
+def get_kospi_tickers_with_names() -> List[Dict[str, str]]:
+    """
+    Get KOSPI tickers with names from KRX.
+    
+    Returns:
+        List of dicts: [{'Code': '005930', 'Name': '삼성전자'}, ...]
+    """
+    return get_krx_tickers('KOSPI')
+    """
+    Get KOSPI tickers from KRX.
+    
+    Returns:
+        List of dicts: [{'Code': '005930', 'Name': '삼성전자'}, ...]
+    """
+    return get_krx_tickers('KOSPI')
+
+
+# KOSDAQ not implemented yet - kept for future use
+# def get_kosdaq_tickers() -> List[Dict[str, str]]:
+#     """Get KOSDAQ tickers from KRX."""
+#     return get_krx_tickers('KOSDAQ')
+
+
+# ============================================================================
+# Naver Ticker Functions
+# ============================================================================
 
 
 def _get_all_tickers() -> List[str]:
