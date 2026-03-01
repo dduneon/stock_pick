@@ -300,19 +300,19 @@ Task 1 → Task 4 → Task 11 → Task 15 → Final Verification
 
 ## Final Verification Wave
 
-- [ ] **F1. Plan Compliance Audit** — `oracle`
+- [x] **F1. Plan Compliance Audit** — `oracle`
   Read the plan end-to-end. For each "Must Have": verify implementation exists. For each "Must NOT Have": search codebase for forbidden patterns. Check evidence files exist.
   Output: `Must Have [N/N] | Must NOT Have [N/N] | VERDICT`
 
-- [ ] **F2. Code Quality Review** — `unspecified-high`
+- [x] **F2. Code Quality Review** — `unspecified-high`
   Run `pytest backend/tests/test_naver_crawler.py -v`. Check for `as any`, bare `except`, magic numbers. Review type hints coverage.
   Output: `Tests [PASS/FAIL] | Quality [PASS/FAIL] | Coverage [%]`
 
-- [ ] **F3. Real Integration Test** — `unspecified-high`
+- [x] **F3. Real Integration Test** — `unspecified-high`
   Run batch collection for 5 test stocks. Verify CSV/JSON files contain all new fields with correct values.
   Output: `Collection [PASS/FAIL] | Fields [N/N] | Data Valid [YES/NO]`
 
-- [ ] **F4. API Compatibility Check** — `deep`
+- [x] **F4. API Compatibility Check** — `deep`
   Test existing API endpoints (`/api/stocks`, `/api/recommendations`) still work with new crawler.
   Output: `Endpoints [N/N working] | Backward Compatible [YES/NO]`
 
