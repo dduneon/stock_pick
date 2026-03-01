@@ -1,229 +1,125 @@
-"""
-KOSPI Stock Data Collection Script using pykrx
+import sys
+import os
 
-This module collects KOSPI stock data including:
-- OHLCV (Open, High, Low, Close, Volume)
-- PER (Price-to-Earnings Ratio)
-- PBR (Price-to-Book Ratio)
-- Market Capitalization (시가총액)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+"""
+KOSPI Stock Data Collection Script using Naver Finance
+=======================================================
+
+This module collects KOSPI stock data from Naver Finance:
+- Current Price, PER, PBR, Forward PER
+- EPS, BPS, Market Capitalization, Dividend Yield
+- ROE, Debt Ratio, EPS Growth YoY (from 기업실적분석)
+- OHLCV (from historical data page)
 
 Usage:
     python -m backend.batch.collect_data
+    
+    # Test mode (10 stocks)
+    python -m backend.batch.collect_data --test
+    
+    # Limit to N stocks
+    python -m backend.batch.collect_data --limit 50
 """
 
-from datetime import datetime, timedelta
-from typing import Optional
 import os
+import time
+import random
+import argparse
+from datetime import datetime
+from typing import Optional, List, Dict, Any
 
 import pandas as pd
-from pykrx import stock
+import requests
+from bs4 import BeautifulSoup
+
+from app.services import naver_crawler
+
+MIN_DELAY = 1.0
+MAX_DELAY = 2.0
 
 
-def get_kospi_ticker_list(date: Optional[str] = None) -> list[str]:
-    """
-    Get list of KOSPI ticker codes.
-    
-    Args:
-        date: Date in YYYYMMDD format. Defaults to today.
-    
-    Returns:
-        List of ticker codes (e.g., ['005930', '000001', ...])
-    """
-    if date is None:
-        date = datetime.now().strftime("%Y%m%d")
-    
-    tickers = stock.get_market_ticker_list(date, market="KOSPI")
-    return tickers
+def get_naver_ticker_list(limit: Optional[int] = None) -> List[str]:
+    return naver_crawler.get_all_tickers(limit=limit)
 
 
-def get_stock_ohlcv(ticker: str, date: str) -> pd.DataFrame:
-    """
-    Get OHLCV data for a specific stock.
+def collect_kospi_data(
+    limit: Optional[int] = None,
+    test_mode: bool = False
+) -> pd.DataFrame:
+    print(f"Collecting KOSPI data from Naver Finance...")
     
-    Args:
-        ticker: Stock ticker code (e.g., '005930')
-        date: Date in YYYYMMDD format
+    tickers = get_naver_ticker_list(limit=limit)
     
-    Returns:
-        DataFrame with columns: ['시가', '고가', '저가', '종가', '거래량', '거래대금']
-    """
-    try:
-        # Get last 1 day (today)
-        end_date = datetime.strptime(date, "%Y%m%d")
-        start_date = end_date - timedelta(days=5)  # Buffer for weekends
-        
-        df = stock.get_market_ohlcv(
-            start_date.strftime("%Y%m%d"),
-            end_date.strftime("%Y%m%d"),
-            ticker
-        )
-        
-        if df.empty:
-            return pd.DataFrame()
-        
-        # Get the last row (most recent)
-        return df.iloc[-1:]
-    except Exception:
-        return pd.DataFrame()
-    """
-    Get OHLCV data for a specific stock.
-    
-    Args:
-        ticker: Stock ticker code (e.g., '005930')
-        date: Date in YYYYMMDD format
-    
-    Returns:
-        DataFrame with columns: ['시가', '고가', '저가', '종가', '거래량', '거래대금']
-    """
-    # Get last 1 day (today)
-    end_date = datetime.strptime(date, "%Y%m%d")
-    start_date = end_date - timedelta(days=5)  # Buffer for weekends
-    
-    df = stock.get_market_ohlcv(
-        start_date.strftime("%Y%m%d"),
-        end_date.strftime("%Y%m%d"),
-        ticker
-    )
-    
-    if df.empty:
-        return pd.DataFrame()
-    
-    # Get the last row (most recent)
-    return df.iloc[-1:]
-
-
-def get_stock_fundamental(ticker: str, date: str) -> pd.DataFrame:
-    """
-    Get fundamental data (PER, PBR, 시가총액) for a specific stock.
-    
-    Args:
-        ticker: Stock ticker code (e.g., '005930')
-        date: Date in YYYYMMDD format
-    
-    Returns:
-        DataFrame with columns: ['PER', 'PBR', '시가총액', 'EPS', 'BPS']
-    """
-    try:
-        df = stock.get_market_fundamental(date, date, ticker)
-        
-        if df.empty:
-            return pd.DataFrame()
-        
-        # Get the last row (most recent)
-        return df.iloc[-1:]
-    except Exception:
-        return pd.DataFrame()
-    """
-    Get fundamental data (PER, PBR, 시가총액) for a specific stock.
-    
-    Args:
-        ticker: Stock ticker code (e.g., '005930')
-        date: Date in YYYYMMDD format
-    
-    Returns:
-        DataFrame with columns: ['PER', 'PBR', '시가총액', 'EPS', 'BPS']
-    """
-    df = stock.get_market_fundamental(date, date, ticker)
-    
-    if df.empty:
-        return pd.DataFrame()
-    
-    # Get the last row (most recent)
-    return df.iloc[-1:]
-
-
-def get_stock_name(ticker: str) -> str:
-    """
-    Get company name for a ticker code.
-    
-    Args:
-        ticker: Stock ticker code
-    
-    Returns:
-        Company name
-    """
-    return stock.get_market_ticker_name(ticker)
-
-
-def collect_kospi_data(date: Optional[str] = None, limit: Optional[int] = None) -> pd.DataFrame:
-    """
-    Collect all KOSPI stock data for a given date.
-    
-    Args:
-        date: Date in YYYYMMDD format. Defaults to today.
-        limit: Optional limit for number of stocks to collect (for testing)
-    
-    Returns:
-        DataFrame with all collected stock data
-    """
-    if date is None:
-        date = datetime.now().strftime("%Y%m%d")
-    
-    print(f"Collecting KOSPI data for {date}...")
-    
-    # Get ticker list
-    tickers = get_kospi_ticker_list(date)
-    print(f"Found {len(tickers)} KOSPI stocks")
-    
-    if limit:
+    if test_mode:
+        limit = 10
         tickers = tickers[:limit]
-        print(f"Limited to {limit} stocks (for testing)")
+        print(f"Test mode: limiting to {limit} stocks")
+    elif limit:
+        tickers = tickers[:limit]
+        print(f"Limited to {limit} stocks")
+    
+    print(f"Processing {len(tickers)} stocks...")
     
     all_data = []
     
     for i, ticker in enumerate(tickers):
         try:
-            # Get OHLCV
-            ohlcv = get_stock_ohlcv(ticker, date)
+            if i > 0:
+                delay = random.uniform(MIN_DELAY, MAX_DELAY)
+                time.sleep(delay)
             
-            # Get fundamental data
-            fundamental = get_stock_fundamental(ticker, date)
+            quote = naver_crawler.get_stock_quote(ticker)
             
-            # Get company name
-            name = get_stock_name(ticker)
+            if not quote:
+                print(f"  Warning: No data for {ticker}")
+                continue
             
-            # Combine data
-            if not ohlcv.empty:
-                row = {
-                    'ticker': ticker,
-                    'name': name,
-                    'date': date,
-                }
-                
-                # Add OHLCV columns
-                if not ohlcv.empty:
-                    row['open'] = ohlcv['시가'].values[0] if '시가' in ohlcv.columns else None
-                    row['high'] = ohlcv['고가'].values[0] if '고가' in ohlcv.columns else None
-                    row['low'] = ohlcv['저가'].values[0] if '저가' in ohlcv.columns else None
-                    row['close'] = ohlcv['종가'].values[0] if '종가' in ohlcv.columns else None
-                    row['volume'] = ohlcv['거래량'].values[0] if '거래량' in ohlcv.columns else None
-                    row['amount'] = ohlcv['거래대금'].values[0] if '거래대금' in ohlcv.columns else None
-                
-                # Add fundamental columns
-                if not fundamental.empty:
-                    row['per'] = fundamental['PER'].values[0] if 'PER' in fundamental.columns else None
-                    row['pbr'] = fundamental['PBR'].values[0] if 'PBR' in fundamental.columns else None
-                    row['market_cap'] = fundamental['시가총액'].values[0] if '시가총액' in fundamental.columns else None
-                    row['eps'] = fundamental['EPS'].values[0] if 'EPS' in fundamental.columns else None
-                    row['bps'] = fundamental['BPS'].values[0] if 'BPS' in fundamental.columns else None
-                else:
-                    row['per'] = None
-                    row['pbr'] = None
-                    row['market_cap'] = None
-                    row['eps'] = None
-                    row['bps'] = None
-                
-                all_data.append(row)
+            row = {
+                'ticker': quote.get('ticker'),
+                'name': quote.get('name'),
+                'date': datetime.now().strftime("%Y-%m-%d"),
+                'current_price': quote.get('current_price'),
+                'per': quote.get('per'),
+                'pbr': quote.get('pbr'),
+                'forward_pe': quote.get('forward_per'),
+                'eps': quote.get('eps'),
+                'bps': quote.get('bps'),
+                'market_cap': quote.get('market_cap'),
+                'dividend_yield': quote.get('dividend_yield'),
+                'roe': quote.get('roe'),
+                'roe_year': quote.get('roe_year'),
+                'debt_ratio': quote.get('debt_ratio'),
+                'debt_ratio_year': quote.get('debt_ratio_year'),
+                'eps_growth_yoy': quote.get('eps_growth_yoy'),
+                'open': quote.get('open'),
+                'high': quote.get('high'),
+                'low': quote.get('low'),
+                'close': quote.get('close'),
+                'volume': quote.get('volume'),
+                # New comprehensive financial metrics (Wave 3)
+                'revenue': quote.get('revenue'),
+                'operating_profit': quote.get('operating_profit'),
+                'net_profit': quote.get('net_profit'),
+                'operating_margin': quote.get('operating_margin'),
+                'net_margin': quote.get('net_margin'),
+                'current_ratio': quote.get('current_ratio'),
+                'reserve_ratio': quote.get('reserve_ratio'),
+                'dividend_per_share': quote.get('dividend_per_share'),
+                'dividend_payout_ratio': quote.get('dividend_payout_ratio'),
+                'fiscal_year': quote.get('fiscal_year'),
+            }
             
-            # Progress indicator
-            if (i + 1) % 100 == 0:
+            all_data.append(row)
+            
+            if (i + 1) % 50 == 0:
                 print(f"  Processed {i + 1}/{len(tickers)} stocks...")
                 
         except Exception as e:
             print(f"  Error processing {ticker}: {e}")
             continue
     
-    # Create DataFrame
     df = pd.DataFrame(all_data)
     
     print(f"Successfully collected {len(df)} stocks")
@@ -231,25 +127,12 @@ def collect_kospi_data(date: Optional[str] = None, limit: Optional[int] = None) 
     return df
 
 
-def save_to_csv(df: pd.DataFrame, date: Optional[str] = None, output_dir: str = "data") -> str:
-    """
-    Save DataFrame to CSV file.
+def save_to_csv(df: pd.DataFrame, output_dir: str = "data") -> str:
+    date_str = datetime.now().strftime("%Y%m%d")
     
-    Args:
-        df: DataFrame to save
-        date: Date string for filename (YYYYMMDD). Defaults to today.
-        output_dir: Output directory path
-    
-    Returns:
-        Path to saved file
-    """
-    if date is None:
-        date = datetime.now().strftime("%Y%m%d")
-    
-    # Create output directory if not exists
     os.makedirs(output_dir, exist_ok=True)
     
-    filename = f"stocks_{date}.csv"
+    filename = f"stocks_{date_str}.csv"
     filepath = os.path.join(output_dir, filename)
     
     df.to_csv(filepath, index=False, encoding='utf-8-sig')
@@ -259,25 +142,12 @@ def save_to_csv(df: pd.DataFrame, date: Optional[str] = None, output_dir: str = 
     return filepath
 
 
-def save_to_json(df: pd.DataFrame, date: Optional[str] = None, output_dir: str = "data") -> str:
-    """
-    Save DataFrame to JSON file.
+def save_to_json(df: pd.DataFrame, output_dir: str = "data") -> str:
+    date_str = datetime.now().strftime("%Y%m%d")
     
-    Args:
-        df: DataFrame to save
-        date: Date string for filename (YYYYMMDD). Defaults to today.
-        output_dir: Output directory path
-    
-    Returns:
-        Path to saved file
-    """
-    if date is None:
-        date = datetime.now().strftime("%Y%m%d")
-    
-    # Create output directory if not exists
     os.makedirs(output_dir, exist_ok=True)
     
-    filename = f"stocks_{date}.json"
+    filename = f"stocks_{date_str}.json"
     filepath = os.path.join(output_dir, filename)
     
     df.to_json(filepath, orient='records', force_ascii=False, indent=2)
@@ -288,23 +158,33 @@ def save_to_json(df: pd.DataFrame, date: Optional[str] = None, output_dir: str =
 
 
 def main():
-    """Main entry point for data collection."""
-    date = datetime.now().strftime("%Y%m%d")
+    parser = argparse.ArgumentParser(description='Collect KOSPI stock data from Naver Finance')
+    parser.add_argument('--limit', type=int, default=None, help='Limit number of stocks to collect')
+    parser.add_argument('--test', action='store_true', help='Test mode: collect 10 stocks')
+    parser.add_argument('--output', type=str, default='data', help='Output directory')
     
-    # Collect data
-    df = collect_kospi_data(date)
+    args = parser.parse_args()
+    
+    test_mode = args.test
+    limit = args.limit
+    
+    df = collect_kospi_data(limit=limit, test_mode=test_mode)
     
     if not df.empty:
-        # Save to CSV
-        save_to_csv(df, date)
-        
-        # Also save to JSON
-        save_to_json(df, date)
+        save_to_csv(df, args.output)
+        save_to_json(df, args.output)
         
         print("\nData collection completed!")
         print(f"Total stocks: {len(df)}")
         print("\nSample data:")
         print(df.head())
+        
+        print("\nData summary:")
+        print(f"  Fields: {list(df.columns)}")
+        print(f"  Non-null counts:")
+        for col in df.columns:
+            non_null = df[col].notna().sum()
+            print(f"    {col}: {non_null}/{len(df)}")
     else:
         print("No data collected")
 
