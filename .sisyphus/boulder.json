@@ -2,7 +2,11 @@
   "active_plan": "/home/dduneon/stock/.sisyphus/plans/naver-crawler-comprehensive.md",
   "started_at": "2026-03-01T04:43:39.900Z",
   "session_ids": [
-    "ses_35856cd0affehs3G8lJhiWC7rW"
+    "ses_35856cd0affehs3G8lJhiWC7rW",
+    "ses_35783a66dffeaah4CvEZDwQRgc",
+    "ses_357225cc1ffeelRjLGhxl6Dqfj",
+    "ses_357221778ffetRlCjdDLqnkJnE",
+    "ses_357211777ffePM378bO9RGe3WO"
   ],
   "plan_name": "naver-crawler-comprehensive",
   "agent": "atlas"
