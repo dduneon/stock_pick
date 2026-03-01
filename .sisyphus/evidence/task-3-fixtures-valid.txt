@@ -1,0 +1,64 @@
+============================================================
+NAVER FINANCE HTML FIXTURE VERIFICATION
+============================================================
+Timestamp: 2026-03-01 13:49:23.549716
+Fixtures directory: backend/tests/fixtures/naver_finance
+
+
+============================================================
+Testing: sk_hynix_full.html
+============================================================
+✓ File size: 4865 bytes
+✓ BeautifulSoup: Table found (tb_type1)
+✓ pandas.read_html: Successfully parsed table
+  - Shape: (15, 11)
+  - Columns: [('주요재무정보', '주요재무정보'), ('최근 연간 실적', '2022.12'), ('최근 연간 실적', '2023.12'), ('최근 연간 실적', '2024.12'), ('최근 연간 실적', '2025.12(E)')]...
+  - Rows: 15
+✓ Structure: thead and tbody present
+✓ Metrics found: 15 rows
+  - First few: ['매출액', '영업이익', '당기순이익']
+
+============================================================
+Testing: samsung_missing_roe.html
+============================================================
+✓ File size: 4386 bytes
+✓ BeautifulSoup: Table found (tb_type1)
+✓ pandas.read_html: Successfully parsed table
+  - Shape: (15, 11)
+  - Columns: [('주요재무정보', '주요재무정보'), ('최근 연간 실적', '2022.12'), ('최근 연간 실적', '2023.12'), ('최근 연간 실적', '2024.12'), ('최근 연간 실적', '2025.12(E)')]...
+  - Rows: 15
+✓ Structure: thead and tbody present
+✓ Metrics found: 15 rows
+  - First few: ['매출액', '영업이익', '당기순이익']
+
+============================================================
+Testing: startup_negative_profit.html
+============================================================
+✓ File size: 5586 bytes
+✓ BeautifulSoup: Table found (tb_type1)
+✓ pandas.read_html: Successfully parsed table
+  - Shape: (15, 11)
+  - Columns: [('주요재무정보', '주요재무정보'), ('최근 연간 실적', '2022.12'), ('최근 연간 실적', '2023.12'), ('최근 연간 실적', '2024.12'), ('최근 연간 실적', '2025.12(E)')]...
+  - Rows: 15
+✓ Structure: thead and tbody present
+✓ Metrics found: 15 rows
+  - First few: ['매출액', '영업이익', '당기순이익']
+
+============================================================
+Testing: minimal_data.html
+============================================================
+✓ File size: 4063 bytes
+✓ BeautifulSoup: Table found (tb_type1)
+✓ pandas.read_html: Successfully parsed table
+  - Shape: (15, 11)
+  - Columns: [('주요재무정보', '주요재무정보'), ('최근 연간 실적', '2022.12'), ('최근 연간 실적', '2023.12'), ('최근 연간 실적', '2024.12'), ('최근 연간 실적', '2025.12(E)')]...
+  - Rows: 15
+✓ Structure: thead and tbody present
+✓ Metrics found: 15 rows
+  - First few: ['매출액', '영업이익', '당기순이익']
+
+============================================================
+SUMMARY
+============================================================
+Total fixtures: 4
+All passed: True

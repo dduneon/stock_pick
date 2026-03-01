@@ -1,11 +1,9 @@
 {
-  "active_plan": "/home/dduneon/stock/.sisyphus/plans/stock-recommendation-service.md",
-  "started_at": "2026-02-25T14:31:51.493Z",
+  "active_plan": "/home/dduneon/stock/.sisyphus/plans/naver-crawler-comprehensive.md",
+  "started_at": "2026-03-01T04:43:39.900Z",
   "session_ids": [
-    "ses_36ac95e44ffe0FOgiJiSbXlJn0",
-    "ses_36ac93c71ffeh9KbhPaON7iZce",
-    "ses_36ac8d66fffeRjnvmdqmorCeid"
+    "ses_35856cd0affehs3G8lJhiWC7rW"
   ],
-  "plan_name": "stock-recommendation-service",
+  "plan_name": "naver-crawler-comprehensive",
   "agent": "atlas"
 }

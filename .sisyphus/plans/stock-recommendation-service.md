@@ -155,7 +155,7 @@ Wave FINAL (Verification):
 
 ## TODOs
 
-- [ ] 1. 프로젝트 세팅 (Next.js + FastAPI + 디렉토리 구조)
+VY|- [x] 1. 프로젝트 세팅 (Next.js + FastAPI + 디렉토리 구조)
 
   **What to do**:
   - Next.js 15 프로젝트 생성 (App Router, TypeScript)
@@ -215,7 +215,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 2. Backend API 스캐폴딩 (FastAPI)
+SK|- [x] 2. Backend API 스캐폴딩 (FastAPI)
 
   **What to do**:
   - FastAPI 앱 생성 (main.py)
@@ -266,7 +266,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 3. Frontend 세팅 (Next.js + Tailwind + Shadcn/ui)
+XH|- [x] 3. Frontend 세팅 (Next.js + Tailwind + Shadcn/ui)
 
   **What to do**:
   - Tailwind CSS 설정
@@ -314,7 +314,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 4. pykrx 데이터 수집 스크립트 (단위 테스트 포함)
+QV|- [x] 4. pykrx 데이터 수집 스크립트 (단위 테스트 포함)
 
   **What to do**:
   - pykrx 설치 (`pip install pykrx`)
@@ -372,7 +372,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 5. TypeScript types/schema 정의
+RH|- [x] 5. TypeScript types/schema 정의
 
   **What to do**:
   - Backend: Pydantic models (Stock, Recommendation)
@@ -416,7 +416,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 6. 추천 알고리즘 구현 (scoring 로직 + 테스트)
+PT|- [x] 6. 추천 알고리즘 구현 (scoring 로직 + 테스트)
 
   **What to do**:
   - 가치 지표: PER, PBR 점수화 (낮을수록 高점)
@@ -473,7 +473,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 7. REST API endpoints (/stocks, /recommendations, /search)
+QH|- [x] 7. REST API endpoints (/stocks, /recommendations, /search)
 
   **What to do**:
   - GET /api/stocks - 전종목 목록
@@ -524,7 +524,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 8. 대시보드 페이지 (추천 주식 목록)
+MV|- [x] 8. 대시보드 페이지 (추천 주식 목록)
 
   **What to do**:
   - / 페이지 (대시보드)
@@ -573,7 +573,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 9. 주식 리스트 페이지 (필터/정렬)
+- [x] 9. 주식 리스트 페이지 (필터/정렬)
 
   **What to do**:
   - /stocks 페이지
@@ -622,7 +622,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 10. 검색 기능 (Autocomplete)
+- [x] 10. 검색 기능 (Autocomplete)
 
   **What to do**:
   - 헤더 검색 입력창
@@ -671,7 +671,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 11. 상세 페이지 (PER/PBR/현재가)
+- [x] 11. 상세 페이지 (PER/PBR/현재가)
 
   **What to do**:
   - /stock/[ticker] 페이지
@@ -720,7 +720,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 12. Toss UI 스타일 적용 (색상, 타이포그래피)
+- [x] 12. Toss UI 스타일 적용 (색상, 타이포그래피)
 
   **What to do**:
   - Global CSS에 Toss 색상 적용
@@ -768,7 +768,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 13. 에러 처리 (Error Boundary, Empty State)
+- [x] 13. 에러 처리 (Error Boundary, Empty State)
 
   **What to do**:
   - React Error Boundary
@@ -815,7 +815,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 14. 배치 작업 (scheduler or cron)
+- [x] 14. 배치 작업 (scheduler or cron)
 
   **What to do**:
   - 일일 데이터 수집 스크립트 scheduler 설정
@@ -860,7 +860,7 @@ Wave FINAL (Verification):
 
 ---
 
-- [ ] 15. Disclaimer 고지문 추가
+- [x] 15. Disclaimer 고지문 추가
 
   **What to do**:
   - Footer에 금융 고지문 추가
@@ -913,12 +913,12 @@ Wave FINAL (Verification):
   - 검색, 필터, 정렬 기능 검증
   - 에러 상황 테스트
 
-- [ ] F2. **Batch Job Verification**
+- [x] F2. **Batch Job Verification**
   - 데이터 수집 스크립트 실행
   - CSV/JSON 저장 확인
   - 데이터 무결성 검증
 
-- [ ] F3. **Plan Compliance Audit**
+- [x] F3. **Plan Compliance Audit**
   - MVP 범위 준수 확인
   - Guardrails 적용 확인
   - Must Have/Must NOT 확인

@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "description": "Stock data collection metadata tracking",
+  "last_updated": "2026-02-28T23:27:59.804453",
+  "collections": {
+    "daily": {
+      "latest_date": "20260228",
+      "latest_file": "stocks_20260228.csv",
+      "frequency": "daily",
+      "sources": [
+        "naver_finance",
+        "fdr"
+      ]
+    },
+    "quarterly": {
+      "latest_quarter": null,
+      "latest_file": null,
+      "frequency": "quarterly",
+      "sources": [
+        "dart"
+      ]
+    }
+  },
+  "data_structure": {
+    "daily": {
+      "path": "data/daily/",
+      "pattern": "stocks_YYYYMMDD.csv",
+      "fields": [
+        "ticker",
+        "name",
+        "current_price",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "change_rate",
+        "per",
+        "pbr",
+        "forward_per",
+        "eps",
+        "bps",
+        "market_cap",
+        "dividend_yield"
+      ]
+    },
+    "quarterly": {
+      "path": "data/quarterly/",
+      "pattern": "fundamentals_YYYYQQ.csv",
+      "fields": [
+        "ticker",
+        "name",
+        "roe",
+        "debt_ratio",
+        "forward_pe",
+        "eps_growth_yoy",
+        "sector"
+      ]
+    }
+  }
+}
