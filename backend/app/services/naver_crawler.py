@@ -47,7 +47,20 @@ def _parse_number(text: Optional[str]) -> Optional[float]:
         return None
 
 
-
+def _parse_market_cap(text: Optional[str]) -> Optional[float]:
+    if not text:
+        return None
+    text = text.strip().replace(',', '')
+    亿_match = re.search(r'([\d.]+)\s*억', text)
+    if 亿_match:
+        return float(亿_match.group(1)) * 1e8
+    조_match = re.search(r'([\d.]+)\s*조', text)
+    if 조_match:
+        return float(조_match.group(1)) * 1e12
+    만원_match = re.search(r'([\d,]+)\s*만원', text)
+    if 만원_match:
+        return float(만원_match.group(1).replace(',', '')) * 10000
+    return _parse_number(text)
     if not text:
         return None
     text = text.strip().replace(',', '')

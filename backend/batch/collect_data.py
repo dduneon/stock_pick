@@ -40,7 +40,25 @@ MIN_DELAY = 1.0
 MAX_DELAY = 2.0
 
 
-def get_naver_ticker_list(limit: Optional[int] = None) -> List[str]:
+def get_naver_ticker_list(limit: Optional[int] = None) -> List[Dict[str, str]]:
+    """
+    Get KOSPI ticker list with names from KRX.
+    Returns list of dicts: [{'Code': '005930', 'Name': '삼성전자'}, ...]
+    """
+    tickers = naver_crawler.get_kospi_tickers_with_names()
+    if limit:
+        return tickers[:limit]
+    return tickers
+
+
+def get_ticker_code(ticker_dict: Dict[str, str]) -> str:
+    """Extract ticker code from ticker dict."""
+    return ticker_dict.get('Code', '')
+
+
+def get_ticker_name(ticker_dict: Dict[str, str]) -> str:
+    """Extract ticker name from ticker dict."""
+    return ticker_dict.get('Name', '')
     return naver_crawler.get_all_tickers(limit=limit)
 
 
@@ -64,18 +82,22 @@ def collect_kospi_data(
     
     all_data = []
     
-    for i, ticker in enumerate(tickers):
+    for i, ticker_dict in enumerate(tickers):
+        ticker_code = get_ticker_code(ticker_dict)
+        ticker_name = get_ticker_name(ticker_dict)
+        
         try:
             if i > 0:
                 delay = random.uniform(MIN_DELAY, MAX_DELAY)
                 time.sleep(delay)
             
-            quote = naver_crawler.get_stock_quote(ticker)
+            quote = naver_crawler.get_stock_quote(ticker_code)
             
             if not quote:
-                print(f"  Warning: No data for {ticker}")
+                print(f"  Warning: No data for {ticker_code} ({ticker_name})")
                 continue
             
+
             row = {
                 'ticker': quote.get('ticker'),
                 'name': quote.get('name'),
